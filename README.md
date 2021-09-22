@@ -1,19 +1,20 @@
 # Welcome to your CDK Java project!
 
-You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`CdkWorkshopStack`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-It is a [Maven](https://maven.apache.org/) based project, so you can open this project with any Maven compatible Java IDE to build and run tests.
+* cdk init app --language java
+* mvn compile -q
+* cdk ls
+* If you are using a Java IDE, it probably has a simpler way to add this dependency to your project, such as a GUI for editing the POM. We recommend editing pom.xml by hand because of the use of the cdk.version variable, which helps keep the versions of installed modules consistent.
 
 ## Useful commands
 
  * `mvn package`     compile and run tests
- * `cdk ls`          list all stacks in the app
+ * `cdk ls`       cks in the app
  * `cdk synth`       emits the synthesized CloudFormation template
  * `cdk deploy`      deploy this stack to your default AWS account/region
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
+ * `cdk deploy` To deploy the stack using AWS CloudFormation
+ * `cdk diff`   To see these changes, we'll use the cdk diff command
+ * `cdk destroy`   Enter y to approve the changes and delete any stack resources.
 
 Enjoy!

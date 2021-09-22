@@ -1,4 +1,4 @@
-package com.myorg;
+package me.sathish.aws.create.snssqs;
 
 import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.core.Duration;
@@ -8,12 +8,12 @@ import software.amazon.awscdk.services.sns.Topic;
 import software.amazon.awscdk.services.sns.subscriptions.SqsSubscription;
 import software.amazon.awscdk.services.sqs.Queue;
 
-public class CdkWorkshopStack extends Stack {
-    public CdkWorkshopStack(final Construct parent, final String id) {
+public class CdkQueueSnsCreate extends Stack {
+    public CdkQueueSnsCreate(final Construct parent, final String id) {
         this(parent, id, null);
     }
 
-    public CdkWorkshopStack(final Construct parent, final String id, final StackProps props) {
+    public CdkQueueSnsCreate(final Construct parent, final String id, final StackProps props) {
         super(parent, id, props);
 
         final Queue queue = Queue.Builder.create(this, "CdkWorkshopQueue")
@@ -26,4 +26,5 @@ public class CdkWorkshopStack extends Stack {
 
         topic.addSubscription(new SqsSubscription(queue));
     }
+
 }

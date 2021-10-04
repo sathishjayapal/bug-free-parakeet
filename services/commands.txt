@@ -1,0 +1,21 @@
+aws ec2 create-subnet --availability-zone 'us-east-1a' --cidr-block 10.0.1.0/24 --vpc-id vpc-0a7eada1594d0bc68 --tag-specifications 'ResourceType=subnet, Tags=[{Key=Name, Value=Public-Subnet}]'
+
+aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway, Tags=[{Key=Name, Value=DevIGW}]'
+aws ec2 attach-internet-gateway --vpc-id vpc-0a7eada1594d0bc68 --internet-gateway-id igw-075d3bedc68d67751
+
+aws ec2 create-security-group --cli-input-yaml file://devsg.yaml
+aws ec2 delete-security-group file://ec2-delete-sg.yaml
+
+aws ec2 authorize-security-group-ingress --cli-input-yaml file://auth-sec-grp-ing.yaml
+
+aws ec2 run-instances --cli-input-yaml file://ec2-instances.yaml
+aws ec2 terminate-instances --generate-cli-skeleton yaml-input>ec2-instance-terminate
+
+aws ec2 create-vpc --cidr-block 10.0.0.0/22 --tag-specifications 'ResourceType=vpc, Tags=[{Key=Name, Value=DevVPC}]'
+aws ec2 create-vpc --cli-input-yaml file://ec2-vpc.yaml
+aws ec2 describe-vpcs --filters Name=cidr,Values=192.168.0.0/23
+aws ec2 delete-vpc --cli-input-yaml file://ec2-delete-vpc.yaml
+
+aws ec2 create-volume --cli-input-yaml file://ec2-create-volume.yaml
+aws ec2 describe-volumes --query 'Volumes[*].VolumeId'
+aws ec2 delete-volume --cli-input-yaml file://ec2-delete-volume.yaml

@@ -1,0 +1,2 @@
+GroupId: 'sg-05c4a893918530240'  # The ID of the security group.
+DryRun: false # Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.

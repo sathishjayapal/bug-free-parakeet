@@ -11,3 +11,6 @@ target
 .cdk.staging
 cdk.out
 
+/CLI3.pem
+/formymac.pem
+/sats.json

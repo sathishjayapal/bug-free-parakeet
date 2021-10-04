@@ -1,0 +1,9 @@
+AvailabilityZone: 'us-east-1b'  # [REQUIRED] The Availability Zone in which to create the volume.
+Encrypted: false   # Specifies whether the volume should be encrypted.
+Size: 1 # The size of the volume, in GiBs.
+VolumeType: standard # The volume type. Valid values are: standard, io1, gp2, sc1, st1.
+TagSpecifications: # The tags to apply to the volume during creation.
+  - ResourceType: volume  # The type of resource to tag. Valid values are: client-vpn-endpoint, customer-gateway, dedicated-host, dhcp-options, elastic-ip, elastic-gpu, export-image-task, export-instance-task, fleet, fpga-image, host-reservation, image, import-image-task, import-snapshot-task, instance, internet-gateway, key-pair, launch-template, local-gateway-route-table-vpc-association, natgateway, network-acl, network-interface, placement-group, reserved-instances, route-table, security-group, snapshot, spot-fleet-request, spot-instances-request, subnet, traffic-mirror-filter, traffic-mirror-session, traffic-mirror-target, transit-gateway, transit-gateway-attachment, transit-gateway-multicast-domain, transit-gateway-route-table, volume, vpc, vpc-peering-connection, vpn-connection, vpn-gateway, vpc-flow-log.
+    Tags: # The tags to apply to the resource.
+      - Key: 'Name'  # The key of the tag.
+        Value: 'us-east-1b-volume' # The value of the tag.

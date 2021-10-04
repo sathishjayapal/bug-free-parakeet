@@ -1,0 +1,9 @@
+Description: 'Dev SG to limit SSH access'  # [REQUIRED] A description for the security group.
+GroupName: 'DevSG' # [REQUIRED] The name of the security group.
+VpcId: 'vpc-0a7eada1594d0bc68' # [EC2-VPC] The ID of the VPC.
+TagSpecifications: # The tags to assign to the security group.
+  - ResourceType: security-group  # The type of resource to tag. Valid values are: client-vpn-endpoint, customer-gateway, dedicated-host, dhcp-options, elastic-ip, elastic-gpu, export-image-task, export-instance-task, fleet, fpga-image, host-reservation, image, import-image-task, import-snapshot-task, instance, internet-gateway, key-pair, launch-template, local-gateway-route-table-vpc-association, natgateway, network-acl, network-interface, placement-group, reserved-instances, route-table, security-group, snapshot, spot-fleet-request, spot-instances-request, subnet, traffic-mirror-filter, traffic-mirror-session, traffic-mirror-target, transit-gateway, transit-gateway-attachment, transit-gateway-multicast-domain, transit-gateway-route-table, volume, vpc, vpc-peering-connection, vpn-connection, vpn-gateway, vpc-flow-log.
+    Tags: # The tags to apply to the resource.
+      - Key: 'Name'  # The key of the tag.
+        Value: 'DevSG' # The value of the tag.
+DryRun: false # Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.

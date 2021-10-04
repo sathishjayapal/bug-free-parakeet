@@ -1,0 +1,6 @@
+CidrBlock: '192.168.0.0/23'  # [REQUIRED] The IPv4 network range for the VPC, in CIDR notation.
+TagSpecifications: # The tags to assign to the VPC.
+  - ResourceType: vpc
+    Tags:
+      - Key: 'Name'
+        Value: 'TestVPC2'

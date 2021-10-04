@@ -1,0 +1,16 @@
+ImageId: 'ami-087c17d1fe0178315'
+InstanceType: t2.micro
+MaxCount: 1
+MinCount: 1
+Monitoring:
+  Enabled: true
+SecurityGroupIds:
+  - 'sg-05c4a893918530240'
+SubnetId: 'subnet-023bd07855e272513'
+EbsOptimized: false
+InstanceInitiatedShutdownBehavior: stop
+TagSpecifications:
+  - ResourceType: instance
+    Tags:
+      - Key: 'Name'
+        Value: 'DevInstance'

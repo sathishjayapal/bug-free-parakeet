@@ -1,0 +1,5 @@
+CidrIp: '10.0.1.0/24'  # The IPv4 address range, in CIDR format.
+FromPort: 22 # The start of port range for the TCP and UDP protocols, or an ICMP type number.
+GroupId: 'sg-05c4a893918530240' # The ID of the security group.
+IpProtocol: 'tcp' # The IP protocol name (tcp, udp, icmp) or number (see Protocol Numbers).
+ToPort: 22 # The end of port range for the TCP and UDP protocols, or an ICMP code number.

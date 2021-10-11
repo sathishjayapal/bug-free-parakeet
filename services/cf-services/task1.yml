@@ -32,8 +32,8 @@ Resources:
 
   IGW:
     Type: AWS::EC2::InternetGateway
-    Properties:Support
-    Tags:
+    Properties:
+      Tags:
         - Key: Name
           Value: Lab IGW
 
@@ -116,7 +116,13 @@ Resources:
       Tags:
         - Key: Name
           Value: App
-
+  ###########
+  # S3 Bucket
+  ###########
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 'sample.sathish.bucket.name.m1m2'
 ###########
 # Outputs
 ###########
@@ -125,3 +131,5 @@ Outputs:
 
   LabVPCDefaultSecurityGroup:
     Value: !Sub ${LabVPC.DefaultSecurityGroup}
+  BucketName:
+    Value: !Sub ${S3Bucket}

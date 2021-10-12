@@ -12,7 +12,9 @@ Parameters:
   PublicSubnetCidr:
     Type: String
     Default: 10.0.0.0/24
-
+  AmazonLinuxAMIID:
+    Type: String
+    Description: Enter the AMI ID number of the Amazon Linux 2 AMI for your region
 
 Resources:
 
@@ -123,6 +125,25 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: 'sample.sathish.bucket.name.m1m2'
+  #####################
+  # EC2 Instance      #
+  #####################
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmazonLinuxAMIID
+      InstanceType: t2.micro
+      SecurityGroupIds: [ !Ref AppSecurityGroup ]
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: name
+          Value: !Join
+            - ''
+            - - !Ref AWS::StackName
+              - ''
+              - !Ref AmazonLinuxAMIID
+
+
 ###########
 # Outputs
 ###########
@@ -133,3 +154,9 @@ Outputs:
     Value: !Sub ${LabVPC.DefaultSecurityGroup}
   BucketName:
     Value: !Sub ${S3Bucket}
+  EC2InstanceName:
+    Value: !Join
+      - ''
+      - - !Ref AWS::StackName
+        - ''
+        - !Ref AmazonLinuxAMIID

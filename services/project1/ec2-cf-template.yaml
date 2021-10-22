@@ -8,6 +8,7 @@ Parameters:
   CFNStackName:
     Type: String
     Description: Enter stackname
+    Default: CF-WEB-STACK
   BastionAMI:
     Type: String
     Description: Enter Bastion Information
@@ -75,12 +76,13 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
     Properties:
       HealthCheckEnabled: true
-      HealthCheckIntervalSeconds: 5
+      HealthCheckIntervalSeconds: 30
+      Protocol: HTTP
+      Port: 80
       Name: ALBTarget
-      VpcId: 
+      VpcId:
         Fn::ImportValue:
           !Sub "${CFNStackName}-VPCId"
-        
 Outputs:
   WebServerInstance1:
     Value: !Join

@@ -87,49 +87,48 @@ Resources:
     Properties:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
-  ALBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: ALBSG
-      GroupDescription: Enable SG for ALB
-      VpcId: !Ref VPC
-      Tags:
-        - Key: name
-          Value: ALBSG
   WebInstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: WEBSIG
       GroupDescription: Enable SG for EC2 INSTANCE
       VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: WEBSIG
   BastionSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: WEBSG
+      GroupName: BASTIONSG
       GroupDescription: Enable SG for EC2 INSTANCE
       VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
       Tags:
-        - Key: name
+        - Key: Name
           Value: BASTIONSG
-  WebInstanceInboundRulePort80:
-    Type: AWS::EC2::SecurityGroupIngress
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      IpProtocol: tcp
-      FromPort: 80
-      ToPort: 80
-      GroupId: !GetAtt ALBSecurityGroup.GroupId
-      SourceSecurityGroupId: !GetAtt WebInstanceSecurityGroup.GroupId
-  WebInstanceInboundRulePort22:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: tcp
-      FromPort: 22
-      ToPort: 22
-      GroupId: !GetAtt ALBSecurityGroup.GroupId
-      SourceSecurityGroupId: !GetAtt BastionSecurityGroup.GroupId
+      GroupName: ALBSGP
+      GroupDescription: Enable SG for ALB Instance
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: ALBSGP
 Outputs:
   VPC:
     Description: VPC

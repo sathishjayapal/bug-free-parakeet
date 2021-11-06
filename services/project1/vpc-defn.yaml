@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Deploy a VPC - Project 1
 Resources:
-  VPC:
+  MyVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: 10.0.0.0/16
@@ -18,12 +18,12 @@ Resources:
   AttachGateway:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       InternetGatewayId: !Ref InternetGateway
   PublicSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: !Select
         - '0'
@@ -34,7 +34,7 @@ Resources:
   PublicSubnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: !Select
         - '1'
@@ -45,7 +45,7 @@ Resources:
   PrivateSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.3.0/24
       AvailabilityZone: !Select
         - '0'
@@ -56,7 +56,7 @@ Resources:
   PrivateSubnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.4.0/24
       AvailabilityZone: !Select
         - '1'
@@ -67,7 +67,7 @@ Resources:
   PublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       Tags:
         - Key: Name
           Value: Public Route Table
@@ -92,12 +92,7 @@ Resources:
     Properties:
       GroupName: WEBSIG
       GroupDescription: Enable SG for EC2 INSTANCE
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
+      VpcId: !Ref MyVPC
       Tags:
         - Key: Name
           Value: WEBSIG
@@ -106,12 +101,7 @@ Resources:
     Properties:
       GroupName: BASTIONSG
       GroupDescription: Enable SG for EC2 INSTANCE
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
+      VpcId: !Ref MyVPC
       Tags:
         - Key: Name
           Value: BASTIONSG
@@ -120,7 +110,7 @@ Resources:
     Properties:
       GroupName: ALBSGP
       GroupDescription: Enable SG for ALB Instance
-      VpcId: !Ref VPC
+      VpcId: !Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -129,13 +119,36 @@ Resources:
       Tags:
         - Key: Name
           Value: ALBSGP
+  PortEightySGIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ALBSecurityGroup
+          - GroupId
+      GroupId:
+        Fn::GetAtt:
+          - WebInstanceSecurityGroup
+          - GroupId
+  PortTwoTwoSGIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      GroupId:
+        Fn::GetAtt:
+          - BastionSecurityGroup
+          - GroupId
 Outputs:
   VPC:
     Description: VPC
-    Value: !Ref VPC
+    Value: !Ref MyVPC
     Export:
-      Name:
-        Fn::Sub: "${AWS::StackName}-VPCId"
+      Name: !Sub "${AWS::StackName}-MyVPC"
   PRIVATESUBNET1:
     Description: Private Subnet 1
     Value: !Ref PrivateSubnet1
@@ -163,9 +176,9 @@ Outputs:
   PUBLICSUBNET3:
     Description: Public Subnets
     Value: !Join
-          - ','
-          - - !Ref PublicSubnet1
-            - !Ref PublicSubnet2
+      - ','
+      - - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-PUBLICSUBNET3"
@@ -173,7 +186,7 @@ Outputs:
     Description: public Web security group
     Value: !Ref WebInstanceSecurityGroup
     Export:
-      Name: 
+      Name:
         Fn::Sub: "${AWS::StackName}-WebInstanceSecurityGroup"
   ALBSG:
     Description: Public ALB Security group

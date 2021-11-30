@@ -8,7 +8,7 @@ Parameters:
   CFNStackName:
     Type: String
     Description: Enter stackname
-    Default: mynewvpcdefn1
+    Default: mynewvpcdefn
   BastionAMI:
     Type: String
     Description: Enter Bastion Information

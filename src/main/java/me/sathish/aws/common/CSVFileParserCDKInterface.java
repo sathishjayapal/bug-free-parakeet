@@ -11,23 +11,25 @@ import java.time.LocalDateTime;
 import java.util.Properties;
 
 public interface CSVFileParserCDKInterface {
-    Logger LOGGER= LoggerFactory.getLogger("CSVFileParserCDKInterface");
-    String fileName="config.properties";
+    Logger LOGGER = LoggerFactory.getLogger("CSVFileParserCDKInterface");
+    String fileName = "config.properties";
     ThreadLocal<String> PROJ_ENV = ThreadLocal.withInitial(() -> "project.env");
-    String PROJ_NAME="project.name";
-    String PROJ_TECH="project.technology";
+    String PROJ_NAME = "project.name";
+    String PROJ_TECH = "project.technology";
     String PROJECT_FUNCTIONAL = "project.functional";
     ThreadLocal<Properties> properties = ThreadLocal.withInitial(() -> {
         try {
             return loadAndReturnProps();
         } catch (Exception e) {
-           return null;
+            return null;
         }
     });
+
     static String makeCDKIdentifier() throws Exception {
         return new StringBuilder().append(properties.get().getProperty(PROJ_NAME)).append("-").append(properties.get().getProperty(PROJ_ENV.get())).append("-").append(properties.get().get(PROJ_TECH)).append("-").append(properties.get().get(PROJECT_FUNCTIONAL)).toString();
     }
-    static Properties loadAndReturnProps() throws Exception{
+
+    static Properties loadAndReturnProps() throws Exception {
         Properties prop = null;
         try (InputStream input = CSVFileParserCDKInterface.class.getClassLoader().getResourceAsStream(fileName)) {
             prop = new Properties();
@@ -41,13 +43,13 @@ public interface CSVFileParserCDKInterface {
         }
         return prop;
     }
+
     default void createTagsForCsvBucket(Bucket createdBucket) {
         Tags.of(createdBucket).add("createdate", LocalDateTime.now().toString());
         Tags.of(createdBucket).add("expiredate", LocalDateTime.now().plusDays(60).toString());
     }
+
     default String makeCDKIdentifier(String SERVICE_TYPE) throws Exception {
         return new StringBuilder().append(CSVFileParserCDKInterface.makeCDKIdentifier()).append("-").append(SERVICE_TYPE).toString();
     }
-
-
 }

@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Deploy template 2 - Project 1
+Parameters:
+  AmazonLinuxAMIID:
+    Type: String
+    Description: Enter Sathish Machine AMI ID
+    Default: ami-04ad2567c9e3d7893
+  CFNStackName:
+    Type: String
+    Description: Enter stackname
+    Default: starter-vpc-info
+  BastionAMI:
+    Type: String
+    Description: Enter Bastion Information
+    Default: ami-00a36856283d67c39
+Resources:
+  WebServerInstance1:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref AmazonLinuxAMIID
+      InstanceType: t2.micro
+      SecurityGroupIds: !Split
+        - ","
+        - Fn::ImportValue:
+            !Sub "${CFNStackName}-WebInstanceSecurityGroup"
+      SubnetId:
+        Fn::ImportValue:
+          Fn::Sub: "${CFNStackName}-PrivateSubnet1"
+      Tags:
+        - Key: name
+          Value: !Join
+            - ''
+            - - !Ref AWS::StackName
+              - ''
+              - !Ref AmazonLinuxAMIID
+  WebServerInstance2:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref AmazonLinuxAMIID
+      InstanceType: t2.micro
+      SecurityGroupIds: !Split
+        - ","
+        - Fn::ImportValue:
+            !Sub "${CFNStackName}-WebInstanceSecurityGroup"
+      SubnetId:
+        Fn::ImportValue:
+          Fn::Sub: "${CFNStackName}-PrivateSubnet2"
+      Tags:
+        - Key: name
+          Value: !Join
+            - ''
+            - - !Ref AWS::StackName
+              - ''
+              - !Ref AmazonLinuxAMIID
+  MyALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 20
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 15
+      HealthyThresholdCount: 5
+      Matcher:
+        HttpCode: '200'
+      Name: MyDefaultALBTarget
+      Port: 80
+      Protocol: HTTP
+      VpcId:
+        Fn::ImportValue:
+          Fn::Sub: "${CFNStackName}-MyVPC"
+      Targets:
+        - Id: !Ref WebServerInstance2
+        - Id: !Ref WebServerInstance1
+      UnhealthyThresholdCount: 3
+  MyLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: MyAlB
+      SecurityGroups:
+        - Fn::ImportValue:
+            !Sub "${CFNStackName}-ALBSecurityGroup"
+      Subnets: !Split
+        - ","
+        - Fn::ImportValue:
+            !Sub "${CFNStackName}-PUBLICSUBNET3"
+  MyALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: "forward"
+          TargetGroupArn:
+            Ref: MyALBTargetGroup
+      LoadBalancerArn:
+        !Ref MyLoadBalancer
+
+Outputs:
+  WebServerInstance1:
+    Value: !Join
+      - ''
+      - - !Ref AWS::StackName
+        - ''
+        - !Ref WebServerInstance1
+  WebServerInstance2:
+    Value: !Join
+      - ''
+      - - !Ref AWS::StackName
+        - ''
+        - !Ref WebServerInstance2
+  ALBInformation:
+    Value: !Join
+      - ''
+      - - !Ref AWS::StackName
+        - ''
+        - !Ref MyLoadBalancer

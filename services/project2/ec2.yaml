@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploy template 2 - Project 1
+Description: Deploy template 2 - Project 2
 Parameters:
   AmazonLinuxAMIID:
     Type: String
@@ -8,7 +8,7 @@ Parameters:
   CFNStackName:
     Type: String
     Description: Enter stackname
-    Default: starter-vpc-info
+    Default: mynewvpcdefn
   BastionAMI:
     Type: String
     Description: Enter Bastion Information
@@ -26,6 +26,17 @@ Resources:
       SubnetId:
         Fn::ImportValue:
           Fn::Sub: "${CFNStackName}-PrivateSubnet1"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -ex
+          yum -y update
+          yum -y install httpd php mysql php-mysql
+          /usr/bin/systemctl enable httpd
+          /usr/bin/systemctl start httpd
+          cd /var/www/html
+          wget https://aws-tc-largeobjects.s3-us-west-2.amazonaws.com/CUR-TF-100-ACCLFO-2/lab6-scaling/lab-app.zip
+          unzip lab-app.zip -d /var/www/html/
+          chown apache:root /var/www/html/rds.conf.php
       Tags:
         - Key: name
           Value: !Join
@@ -45,6 +56,17 @@ Resources:
       SubnetId:
         Fn::ImportValue:
           Fn::Sub: "${CFNStackName}-PrivateSubnet2"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -ex
+          yum -y update
+          yum -y install httpd php mysql php-mysql
+          /usr/bin/systemctl enable httpd
+          /usr/bin/systemctl start httpd
+          cd /var/www/html
+          wget https://aws-tc-largeobjects.s3-us-west-2.amazonaws.com/CUR-TF-100-ACCLFO-2/lab6-scaling/lab-app.zip
+          unzip lab-app.zip -d /var/www/html/
+          chown apache:root /var/www/html/rds.conf.php
       Tags:
         - Key: name
           Value: !Join
@@ -93,7 +115,6 @@ Resources:
             Ref: MyALBTargetGroup
       LoadBalancerArn:
         !Ref MyLoadBalancer
-
 Outputs:
   WebServerInstance1:
     Value: !Join

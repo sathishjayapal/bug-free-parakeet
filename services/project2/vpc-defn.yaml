@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploy a VPC - Project 1
+Description: Deploy a VPC - Project 2
 Resources:
   MyVPC:
     Type: 'AWS::EC2::VPC'
@@ -64,30 +64,30 @@ Resources:
       Tags:
         - Key: Name
           Value: Private Subnet 2
-  PublicRouteTable:
+  RouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
           Value: Public Route Table
-  PublicRoute:
+  NatGateWayRoute:
     Type: 'AWS::EC2::Route'
     Properties:
-      RouteTableId: !Ref PublicRouteTable
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 10.0.1.0/24
+      NatGatewayId: !Ref NAT
+  InternetRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
-      NatGatewayId: !Ref NAT
   PublicSubnetRouteTableAssociation1:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PublicSubnet1
-      RouteTableId: !Ref PublicRouteTable
-  PublicSubnetRouteTableAssociation2:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      SubnetId: !Ref PublicSubnet2
-      RouteTableId: !Ref PublicRouteTable
+      RouteTableId: !Ref RouteTable
   WebInstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

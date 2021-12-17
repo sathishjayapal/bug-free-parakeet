@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy Network and Compute Stacks
+Resources:
+  NetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-16d8zuepgfgc1-us-east-1.s3.amazonaws.com/2021348nWg-vpc-defn.yaml
+  ComputeStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-16d8zuepgfgc1-us-east-1.s3.amazonaws.com/20213481Nw-ec2.yaml

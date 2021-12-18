@@ -4,8 +4,44 @@ Resources:
   NetworkStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cf-templates-16d8zuepgfgc1-us-east-1.s3.amazonaws.com/2021348nWg-vpc-defn.yaml
+      TemplateURL: https://project2-sathish-1221.s3.amazonaws.com/vpc-defn.yaml
   ComputeStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cf-templates-16d8zuepgfgc1-us-east-1.s3.amazonaws.com/20213481Nw-ec2.yaml
+      TemplateURL: https://project2-sathish-1221.s3.amazonaws.com/ec2.yaml
+      Parameters:
+        BASSG:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.BASSG
+        VPC:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.VPC
+        WebInstanceSecurityGroup:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.WebInstanceSecurityGroup
+        PrivateSubnet1:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.PrivateSubnet1
+        PrivateSubnet2:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.PrivateSubnet2
+        ALBSecurityGroup:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.ALBSecurityGroup
+        PublicSubnet3:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.PublicSubnet3
+        PublicSubnet2:
+          Fn::GetAtt:
+            - NetworkStack
+            - Outputs.PublicSubnet2
+
+
+

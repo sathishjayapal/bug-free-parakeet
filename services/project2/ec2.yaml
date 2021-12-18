@@ -1,33 +1,56 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Deploy template 2 - Project 2
 Parameters:
+  VPC:
+    Type: String
+    Description: VPC ID
+  WebInstanceSecurityGroup:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: WebInstanceSecurityGroup
+  PrivateSubnet1:
+    Type: String
+    Description: PrivateSubnet1
+  PrivateSubnet2:
+    Type: String
+    Description: PrivateSubnet2
+  ALBSecurityGroup:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: ALBSecurityGroup
+  PublicSubnet3:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: PublicSubnet3
+  PublicSubnet2:
+    Type: String
+    Description: PublicSubnet2
   AmazonLinuxAMIID:
     Type: String
     Description: Enter Sathish Machine AMI ID
     Default: ami-04ad2567c9e3d7893
-  CFNStackName:
-    Type: String
-    Description: Enter stackname
-    Default: mynewvpcdefn
   BastionAMI:
     Type: String
     Description: Enter Bastion Information
     Default: ami-00a36856283d67c39
+  BASSG:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: BastionSecurityGroup
 Resources:
+  BastionServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref BastionAMI
+      InstanceType: t2.micro
+      SecurityGroupIds: !Ref BASSG
+      SubnetId: !Ref PublicSubnet2
   WebServerInstance1:
     Type: 'AWS::EC2::Instance'
     Properties:
       ImageId: !Ref AmazonLinuxAMIID
       InstanceType: t2.micro
-      SecurityGroupIds: !Split
-        - ","
-        - Fn::ImportValue:
-            !Sub "${CFNStackName}-WebInstanceSecurityGroup"
-      SubnetId:
-        Fn::ImportValue:
-          Fn::Sub: "${CFNStackName}-PrivateSubnet1"
+      SecurityGroupIds: !Ref WebInstanceSecurityGroup
+      SubnetId: !Ref PrivateSubnet1
       UserData:
-        Fn::Base64: !Sub |
+        Fn::Base64:
+          !Sub |
           #!/bin/bash -ex
           yum -y update
           yum -y install httpd php mysql php-mysql
@@ -49,15 +72,11 @@ Resources:
     Properties:
       ImageId: !Ref AmazonLinuxAMIID
       InstanceType: t2.micro
-      SecurityGroupIds: !Split
-        - ","
-        - Fn::ImportValue:
-            !Sub "${CFNStackName}-WebInstanceSecurityGroup"
-      SubnetId:
-        Fn::ImportValue:
-          Fn::Sub: "${CFNStackName}-PrivateSubnet2"
+      SecurityGroupIds: !Ref WebInstanceSecurityGroup
+      SubnetId: !Ref PrivateSubnet2
       UserData:
-        Fn::Base64: !Sub |
+        Fn::Base64:
+          !Sub |
           #!/bin/bash -ex
           yum -y update
           yum -y install httpd php mysql php-mysql
@@ -86,9 +105,7 @@ Resources:
       Name: MyDefaultALBTarget
       Port: 80
       Protocol: HTTP
-      VpcId:
-        Fn::ImportValue:
-          Fn::Sub: "${CFNStackName}-MyVPC"
+      VpcId: !Ref VPC
       Targets:
         - Id: !Ref WebServerInstance2
         - Id: !Ref WebServerInstance1
@@ -97,13 +114,8 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
     Properties:
       Name: MyAlB
-      SecurityGroups:
-        - Fn::ImportValue:
-            !Sub "${CFNStackName}-ALBSecurityGroup"
-      Subnets: !Split
-        - ","
-        - Fn::ImportValue:
-            !Sub "${CFNStackName}-PUBLICSUBNET3"
+      SecurityGroups: !Ref ALBSecurityGroup
+      Subnets: !Ref PublicSubnet3
   MyALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
